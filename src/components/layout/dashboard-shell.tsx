@@ -1,0 +1,118 @@
+"use client";
+
+import Link from "next/link";
+import type { Route } from "next";
+import {
+  BookOpenText,
+  HeartPulse,
+  LayoutDashboard,
+  ListTodo,
+  PiggyBank,
+  Sparkles,
+  Target,
+  Trophy,
+  Settings,
+} from "lucide-react";
+
+import { ThemeToggle } from "@/components/shared/theme-toggle";
+import { SignOutButton } from "@/features/auth/components/sign-out-button";
+import { APP_ROUTES } from "@/lib/constants/routes";
+
+type DashboardShellProps = {
+  user: {
+    email: string;
+    fullName: string | null;
+  };
+  children: React.ReactNode;
+};
+
+const navigation = [
+  {
+    href: APP_ROUTES.dashboard as Route,
+    label: "Dashboard",
+    icon: LayoutDashboard,
+  },
+  { href: APP_ROUTES.dashboardHabits as Route, label: "Habits", icon: Trophy },
+  { href: APP_ROUTES.dashboardTasks as Route, label: "Tasks", icon: ListTodo },
+  { href: APP_ROUTES.dashboardGoals as Route, label: "Goals", icon: Target },
+  {
+    href: APP_ROUTES.dashboardJournal as Route,
+    label: "Journal",
+    icon: BookOpenText,
+  },
+  {
+    href: APP_ROUTES.dashboardHealth as Route,
+    label: "Health",
+    icon: HeartPulse,
+  },
+  {
+    href: APP_ROUTES.dashboardFinance as Route,
+    label: "Finance",
+    icon: PiggyBank,
+  },
+  {
+    href: APP_ROUTES.dashboardInsights as Route,
+    label: "AI Insights",
+    icon: Sparkles,
+  },
+  {
+    href: APP_ROUTES.dashboardSettings as Route,
+    label: "Settings",
+    icon: Settings,
+  },
+];
+
+export function DashboardShell({ children, user }: DashboardShellProps) {
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="grid min-h-screen lg:grid-cols-[260px_1fr]">
+        <aside className="hidden border-r border-border/70 bg-card/60 px-6 py-8 lg:block">
+          <div className="space-y-10">
+            <div className="space-y-2">
+              <p className="text-xs uppercase tracking-[0.3em] text-primary">
+                LifeOS
+              </p>
+              <h2 className="text-2xl font-semibold tracking-tight">
+                Command center
+              </h2>
+            </div>
+            <nav className="space-y-2">
+              {navigation.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-muted-foreground transition hover:bg-secondary hover:text-foreground"
+                  >
+                    <Icon className="h-4 w-4" />
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+        </aside>
+        <div className="flex min-h-screen flex-col">
+          <header className="border-b border-border/70 bg-background/80 px-4 py-4 backdrop-blur lg:px-8">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">
+                  Signed in as {user.email}
+                </p>
+                <h1 className="text-xl font-semibold tracking-tight">
+                  {user.fullName ?? "Dashboard"}
+                </h1>
+              </div>
+              <div className="flex items-center gap-3">
+                <ThemeToggle />
+                <SignOutButton />
+              </div>
+            </div>
+          </header>
+          <main className="flex-1 px-4 py-6 lg:px-8">{children}</main>
+        </div>
+      </div>
+    </div>
+  );
+}
