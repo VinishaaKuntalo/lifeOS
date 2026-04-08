@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import type { Route } from "next";
 import {
   Area,
   AreaChart,
@@ -11,6 +13,7 @@ import {
 } from "recharts";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { APP_ROUTES } from "@/lib/constants/routes";
 
 import type { DashboardWorkspaceData } from "@/features/dashboard/types/dashboard";
 
@@ -23,27 +26,42 @@ export function DashboardOverview({ data }: DashboardOverviewProps) {
     <section className="space-y-6">
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         <SummaryCard
+          href={APP_ROUTES.dashboardHabits}
           label="Habits done today"
           value={data.summary.habitsCompletedToday}
         />
-        <SummaryCard label="Inbox tasks" value={data.summary.inboxTasks} />
-        <SummaryCard label="Active goals" value={data.summary.activeGoals} />
         <SummaryCard
+          href={APP_ROUTES.dashboardTasks}
+          label="Inbox tasks"
+          value={data.summary.inboxTasks}
+        />
+        <SummaryCard
+          href={APP_ROUTES.dashboardGoals}
+          label="Active goals"
+          value={data.summary.activeGoals}
+        />
+        <SummaryCard
+          href={APP_ROUTES.dashboardJournal}
           label="Journal streak"
           value={data.summary.journalStreak}
         />
         <SummaryCard
+          href={APP_ROUTES.dashboardHealth}
           label="Latest weight"
           value={data.summary.latestWeight ?? "-"}
         />
         <SummaryCard
+          href={APP_ROUTES.dashboardFinance}
           label="Net cashflow"
           value={data.summary.netCashflow.toFixed(2)}
         />
       </div>
 
       <div className="grid gap-6 xl:grid-cols-2">
-        <ChartCard title="Habit completions (30 days)">
+        <ChartCard
+          href={APP_ROUTES.dashboardHabits}
+          title="Habit completions (30 days)"
+        >
           <ResponsiveContainer width="100%" height={280}>
             <AreaChart data={data.charts.habitsHeatmap}>
               <CartesianGrid
@@ -57,7 +75,7 @@ export function DashboardOverview({ data }: DashboardOverviewProps) {
             </AreaChart>
           </ResponsiveContainer>
         </ChartCard>
-        <ChartCard title="Steps (30 days)">
+        <ChartCard href={APP_ROUTES.dashboardHealth} title="Steps (30 days)">
           <ResponsiveContainer width="100%" height={280}>
             <AreaChart data={data.charts.healthSteps}>
               <CartesianGrid
@@ -71,7 +89,10 @@ export function DashboardOverview({ data }: DashboardOverviewProps) {
             </AreaChart>
           </ResponsiveContainer>
         </ChartCard>
-        <ChartCard title="Income vs expense (30 days)">
+        <ChartCard
+          href={APP_ROUTES.dashboardFinance}
+          title="Income vs expense (30 days)"
+        >
           <ResponsiveContainer width="100%" height={280}>
             <AreaChart data={data.charts.financeCashflow}>
               <CartesianGrid
@@ -102,39 +123,47 @@ export function DashboardOverview({ data }: DashboardOverviewProps) {
 }
 
 function SummaryCard({
+  href,
   label,
   value,
 }: {
+  href: Route;
   label: string;
   value: string | number;
 }) {
   return (
-    <Card className="border-border/70 bg-card/70">
-      <CardHeader>
-        <CardTitle className="text-sm font-medium text-muted-foreground">
-          {label}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="text-3xl font-semibold tracking-tight">{value}</div>
-      </CardContent>
-    </Card>
+    <Link href={href} className="block">
+      <Card className="border-border/70 bg-[linear-gradient(180deg,rgba(15,23,42,0.92),rgba(8,15,32,0.98))] shadow-[0_16px_50px_rgba(8,145,178,0.08)] transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[0_18px_60px_rgba(34,211,238,0.14)]">
+        <CardHeader>
+          <CardTitle className="text-sm font-medium text-muted-foreground">
+            {label}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-3xl font-semibold tracking-tight">{value}</div>
+        </CardContent>
+      </Card>
+    </Link>
   );
 }
 
 function ChartCard({
+  href,
   title,
   children,
 }: {
+  href: Route;
   title: string;
   children: React.ReactNode;
 }) {
   return (
-    <Card className="border-border/70 bg-card/70 xl:col-span-1">
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-      </CardHeader>
-      <CardContent>{children}</CardContent>
-    </Card>
+    <Link href={href} className="block">
+      <Card className="border-border/70 bg-[linear-gradient(180deg,rgba(15,23,42,0.92),rgba(8,15,32,0.98))] shadow-[0_16px_50px_rgba(8,145,178,0.08)] transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[0_18px_60px_rgba(34,211,238,0.14)] xl:col-span-1">
+        <CardHeader>
+          <CardTitle>{title}</CardTitle>
+        </CardHeader>
+        <CardContent>{children}</CardContent>
+      </Card>
+    </Link>
   );
 }
