@@ -51,6 +51,7 @@ export async function getFinanceWorkspace(
   userId: string,
 ): Promise<FinanceWorkspaceData> {
   const supabase = await createClient();
+  const today = new Date().toISOString().slice(0, 10);
   const [
     { data: budgets, error: budgetsError },
     { data: transactions, error: transactionsError },
@@ -81,13 +82,32 @@ export async function getFinanceWorkspace(
 
   const budgetRows = budgets ?? [];
   const transactionRows = transactions ?? [];
+  const activeBudgetRows = budgetRows.filter(
+    (item) => item.period_start <= today && item.period_end >= today,
+  );
   const totalIncome = transactionRows
     .filter((item) => item.transaction_type === "income")
     .reduce((sum, item) => sum + item.amount, 0);
   const totalExpense = transactionRows
     .filter((item) => item.transaction_type === "expense")
     .reduce((sum, item) => sum + item.amount, 0);
-  const totalBudgeted = budgetRows.reduce((sum, item) => sum + item.amount, 0);
+  const totalBudgeted = activeBudgetRows.reduce(
+    (sum, item) => sum + item.amount,
+    0,
+  );
+  const totalBudgetSpent = activeBudgetRows.reduce((sum, budget) => {
+    const spent = transactionRows
+      .filter(
+        (item) =>
+          item.transaction_type === "expense" &&
+          item.category.toLowerCase() === budget.category.toLowerCase() &&
+          item.occurred_on >= budget.period_start &&
+          item.occurred_on <= budget.period_end,
+      )
+      .reduce((subtotal, item) => subtotal + item.amount, 0);
+
+    return sum + spent;
+  }, 0);
 
   return {
     summary: {
@@ -97,7 +117,7 @@ export async function getFinanceWorkspace(
       totalBudgeted,
       budgetUtilizationPercent:
         totalBudgeted > 0
-          ? Math.round((totalExpense / totalBudgeted) * 100)
+          ? Math.round((totalBudgetSpent / totalBudgeted) * 100)
           : 0,
     },
     budgets: budgetRows,

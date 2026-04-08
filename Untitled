@@ -1,2 +1,6 @@
-git rm -r --cached node_modules .next
-git rm --cached tsconfig.tsbuildinfo
+#git rm -r --cached node_modules .next
+#git rm --cached tsconfig.tsbuildinfo
+
+
+git commit --allow-empty -m "Trigger Vercel deploy"
+git push origin main

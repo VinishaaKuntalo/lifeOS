@@ -64,9 +64,9 @@ const navigation = [
 
 export function DashboardShell({ children, user }: DashboardShellProps) {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background [background-image:radial-gradient(circle_at_top_left,rgba(56,189,248,0.18),transparent_28%),radial-gradient(circle_at_top_right,rgba(20,184,166,0.14),transparent_26%),radial-gradient(circle_at_bottom,rgba(15,23,42,0.4),transparent_40%)]">
       <div className="grid min-h-screen lg:grid-cols-[260px_1fr]">
-        <aside className="hidden border-r border-border/70 bg-card/60 px-6 py-8 lg:block">
+        <aside className="hidden border-r border-border/70 bg-slate-950/70 px-6 py-8 backdrop-blur lg:block">
           <div className="space-y-10">
             <div className="space-y-2">
               <p className="text-xs uppercase tracking-[0.3em] text-primary">
@@ -94,7 +94,7 @@ export function DashboardShell({ children, user }: DashboardShellProps) {
           </div>
         </aside>
         <div className="flex min-h-screen flex-col">
-          <header className="border-b border-border/70 bg-background/80 px-4 py-4 backdrop-blur lg:px-8">
+          <header className="border-b border-border/70 bg-slate-950/65 px-4 py-4 backdrop-blur lg:px-8">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">
